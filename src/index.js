@@ -1,6 +1,7 @@
 const fs = require('fs').promises;
 const { createReadStream, createWriteStream } = require('fs');
 const path = require('path');
+const inquirer = require('inquirer');
 const { findDirectory } = require('./utils');
 
 class CreateCodeTemplate {
@@ -15,7 +16,10 @@ class CreateCodeTemplate {
     async bootstrap() {
         await this.searchTemplate()
 
-        if (this.findTemplate) {
+        if (!this.findTemplate) return;
+
+        const isPass = await this.prompt();
+        if (isPass) {
             this.builder();
         }
     }
@@ -77,6 +81,30 @@ class CreateCodeTemplate {
                 })
             })
         )
+    }
+    async prompt() {
+        let dirs = await fs.readdir(this.findTemplate);
+        dirs = dirs.map((dir, index, entries) => {
+            const last = index === entries.length - 1 ? '' : ' , ';
+            return dir + last;
+        })
+        
+        const options = [
+            {
+                type: 'confirm',
+                name: 'directory',
+                message: `模版文件夹是这个 ${this.findTemplate} 吗?`,
+                default: true
+            },
+            {
+                type: 'confirm',
+                name: 'filename',
+                message: dirs.length === 0 ? '模版文件夹中没有文件，请您确认?' : `将要克隆的模板文件有 ${dirs}，确认克隆吗?`,
+                default: true
+            },
+        ]
+        const answers = await inquirer.prompt(options)
+        return Object.keys(answers).every(key => answers[key]);
     }
 };
 
