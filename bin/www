@@ -1,0 +1,31 @@
+#! /usr/bin/env node
+
+const { program } = require('commander');
+const CreateCodeTemplate = require('../src');
+const config = require('./config');
+const version = require('../package.json').version;
+
+program.version(version)
+.name('create-code-template')
+.usage('[options]')
+
+const usages = [];
+Object.entries(config).forEach(([key, value]) => {
+    usages.push(value.usage);
+    program.option(value.option, value.description, value.default);
+})
+
+program.on('--help', function () {
+    console.log('Examples:');
+    usages.forEach(usage => console.log('  ' + usage));
+})
+
+process.on('SIGINT', function() {
+    process.exit();
+})
+
+program.parse(process.argv);
+
+let ops = program.opts();
+
+const createCodeTemplate = new CreateCodeTemplate(ops);

@@ -1,0 +1,18 @@
+{
+  "name": "create-code-template",
+  "version": "1.0.0",
+  "description": "cretae template cli",
+  "main": "src/index.js",
+  "bin": {
+    "create-code-template": "./bin/www"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["cli"],
+  "author": "chenxinlong",
+  "license": "ISC",
+  "dependencies": {
+    "commander": "^9.4.0"
+  }
+}
